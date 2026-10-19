@@ -10,25 +10,29 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
       # Phones only: skip x86 emulator ABIs to keep the APK small
       ORG_GRADLE_PROJECT_reactNativeArchitectures: arm64-v8a,armeabi-v7a
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
 
-      - uses: android-actions/setup-android@v3
+      # The runner image ships the Android SDK; just point Gradle at it
+      - name: Android SDK
+        run: |
+          echo "ANDROID_HOME=${ANDROID_HOME:-$ANDROID_SDK_ROOT}" >> "$GITHUB_ENV"
+          ls "${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
 
       - name: Install dependencies
         run: npm ci
@@ -65,7 +69,7 @@ jobs:
           mv android/app/build/outputs/apk/release/app-release.apk "$NAME"
           echo "file=$NAME" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: dokploy-mobile-apk
           path: ${{ steps.apk.outputs.file }}
