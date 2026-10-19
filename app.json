@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "Dokploy Mobile",
+    "slug": "dokploy-mobile",
+    "version": "0.1.0",
+    "scheme": "dokploymobile",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0b0b0c",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0b0b0c"
+    },
+    "android": {
+      "package": "com.oussamakhayi.dokploymobile",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#0b0b0c",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ],
+      "./plugins/withReleaseSigning"
+    ]
+  }
+}
