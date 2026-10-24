@@ -1,8 +1,9 @@
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
+import { Alert, Pressable, RefreshControl, ScrollView, View } from "react-native";
 import { Card, Empty, ErrorView, Icon, Loading, Row, SectionTitle, Segmented, StatusBadge } from "../../components/ui";
-import { useProjects } from "../../lib/queries";
+import { useAction } from "../../lib/hooks";
+import { keys, useProjects } from "../../lib/queries";
 import { SERVICE_CONFIG, servicesOf } from "../../lib/services";
 import type { ServiceSummary } from "../../lib/types";
 import { colors, space } from "../../theme";
@@ -14,6 +15,7 @@ export default function ProjectScreen() {
   const project = data?.find((p) => p.projectId === projectId);
   const envs = project?.environments ?? [];
   const [envId, setEnvId] = useState<string | undefined>();
+  const remove = useAction({ invalidate: [[...keys.projects], ["homeStats"]] });
 
   useEffect(() => {
     if (!envId && envs.length) setEnvId((envs.find((e) => e.isDefault) ?? envs[0]).environmentId);
@@ -41,7 +43,42 @@ export default function ProjectScreen() {
       contentContainerStyle={{ padding: space(4), paddingBottom: space(10) }}
       refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => void refetch()} tintColor={colors.muted} />}
     >
-      <Stack.Screen options={{ title: project.name }} />
+      <Stack.Screen
+        options={{
+          title: project.name,
+          headerRight: () => (
+            <Pressable
+              hitSlop={10}
+              onPress={() =>
+                Alert.alert(project.name, undefined, [
+                  {
+                    text: "Edit",
+                    onPress: () => router.push({ pathname: "/project/new", params: { projectId: project.projectId } }),
+                  },
+                  {
+                    text: "Delete",
+                    style: "destructive",
+                    onPress: () =>
+                      remove.mutate(
+                        {
+                          procedure: "project.remove",
+                          input: { projectId: project.projectId },
+                          confirm: `Delete ${project.name} and all its services?`,
+                          destructive: true,
+                          success: "Project deleted",
+                        },
+                        { onSuccess: (r) => !r.skipped && router.back() },
+                      ),
+                  },
+                  { text: "Cancel", style: "cancel" },
+                ])
+              }
+            >
+              <Icon name="ellipsis-vertical" />
+            </Pressable>
+          ),
+        }}
+      />
       {envs.length > 1 ? (
         <Segmented
           value={envId ?? ""}

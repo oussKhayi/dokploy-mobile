@@ -6,14 +6,18 @@ Built with Expo (React Native) and the official Dokploy REST API. No backend, no
 
 ## Features
 
-- **Projects**: browse projects and environments, with live service status
+- **Multiple accounts**: save several servers (or users), switch in one tap from the header
+- **Dashboard**: projects, services, running and failing at a glance
+- **Projects**: browse, create, rename and delete, with environments and live service status
 - **Services**: applications, Docker Compose, PostgreSQL, MySQL, MariaDB, MongoDB, Redis, libSQL
 - **Actions**: deploy, rebuild, start, stop, reload
 - **Environment variables**: edit env and build args
 - **Domains**: add, edit, delete, with Let's Encrypt toggle
-- **Deployments**: history with status and full build logs (live while building)
+- **Deployments**: history, full build logs (live while building), cancel, kill build, one-tap rollback
+- **Backups**: see database backup schedules and run one now
 - **Runtime logs**: tail, time range, live mode, per container for Compose
 - **Users**: list, create, remove, set permissions and project access
+- **Containers**: every Docker container on the server, with restart, start and stop
 - **Server**: version, IP, Traefik reload, Docker cleanup
 
 ## Install
@@ -69,9 +73,7 @@ Every Dokploy procedure is exposed as `/api/<router>.<procedure>` with an `x-api
 
 ## Roadmap
 
-- Multiple instances
-- Create and delete projects and services
-- Database backups
+- Create services from the app
 - Server metrics
 - Push notifications for failed deployments
 
@@ -81,4 +83,4 @@ Issues and pull requests are welcome.
 
 ## License
 
-MIT. Not affiliated with Dokploy.
+MIT. Not affiliated with Dokploy. The Dokploy logo belongs to the Dokploy project.

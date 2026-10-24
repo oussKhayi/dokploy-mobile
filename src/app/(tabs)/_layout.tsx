@@ -1,4 +1,5 @@
 import { Tabs } from "expo-router";
+import { AccountSwitcher } from "../../components/AccountSwitcher";
 import { Icon } from "../../components/ui";
 import { colors } from "../../theme";
 
@@ -13,6 +14,7 @@ export default function TabsLayout() {
         tabBarActiveTintColor: colors.text,
         tabBarInactiveTintColor: colors.faint,
         sceneStyle: { backgroundColor: colors.bg },
+        headerRight: () => <AccountSwitcher />,
       }}
     >
       <Tabs.Screen

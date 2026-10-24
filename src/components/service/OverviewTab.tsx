@@ -7,6 +7,7 @@ import { timeAgo } from "../../lib/format";
 import type { ServiceDetail, ServiceType } from "../../lib/types";
 import { colors, space } from "../../theme";
 import { Button, Card, Row, SectionTitle, StatusBadge } from "../ui";
+import { BackupsSection } from "./BackupsSection";
 
 type Props = {
   type: ServiceType;
@@ -84,6 +85,8 @@ export function OverviewTab({ type, id, service, refreshing, onRefresh }: Props)
           />
         ))}
       </View>
+
+      <BackupsSection type={type} id={id} backups={service.backups} />
 
       <SectionTitle>Details</SectionTitle>
       <Card>

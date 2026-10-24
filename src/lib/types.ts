@@ -66,6 +66,7 @@ export type ServiceDetail = {
   databaseUser?: string;
   externalPort?: number | null;
   environment?: { name: string; project?: { name: string; projectId: string } };
+  backups?: import("../components/service/BackupsSection").Backup[];
 };
 
 export type Domain = {
@@ -86,6 +87,7 @@ export type Deployment = {
   createdAt: string;
   startedAt?: string | null;
   finishedAt?: string | null;
+  rollbackId?: string | null;
 };
 
 export type Container = { containerId: string; name: string; state: string; status: string };

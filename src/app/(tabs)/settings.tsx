@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import Constants from "expo-constants";
+import { useRouter } from "expo-router";
 import { Linking, RefreshControl, ScrollView, Text } from "react-native";
 import { Button, Card, Icon, Row, SectionTitle } from "../../components/ui";
 import { useAuth, useApi } from "../../lib/auth";
@@ -17,7 +18,8 @@ const MAINTENANCE: { procedure: string; label: string; icon: string; confirm: st
 ];
 
 export default function Settings() {
-  const { creds, disconnect } = useAuth();
+  const { creds, active, accounts, removeAccount } = useAuth();
+  const router = useRouter();
   const api = useApi();
   const version = useQuery({ queryKey: ["version"], queryFn: () => api.query<string>("settings.getDokployVersion") });
   const ip = useQuery({ queryKey: ["ip"], queryFn: () => api.query<string>("settings.getIp") });
@@ -38,6 +40,17 @@ export default function Settings() {
       contentContainerStyle={{ padding: space(4), paddingBottom: space(12) }}
       refreshControl={<RefreshControl refreshing={version.isRefetching} onRefresh={refresh} tintColor={colors.muted} />}
     >
+      <SectionTitle>Account</SectionTitle>
+      <Card>
+        <Row
+          title={active?.name ?? "Account"}
+          subtitle={`${accounts.length} saved account${accounts.length === 1 ? "" : "s"} · tap to switch`}
+          left={<Icon name="swap-horizontal-outline" color={colors.muted} />}
+          onPress={() => router.push("/accounts")}
+        />
+        <Row title="Add account" left={<Icon name="add-circle-outline" color={colors.muted} />} onPress={() => router.push("/accounts/add")} />
+      </Card>
+
       <SectionTitle>Instance</SectionTitle>
       <Card>
         <Row title="URL" subtitle={creds?.url} left={<Icon name="link-outline" color={colors.muted} />} onPress={() => creds && Linking.openURL(creds.url)} />
@@ -47,6 +60,16 @@ export default function Settings() {
           title="Signed in as"
           subtitle={me.data ? `${me.data.user.email} (${me.data.role})` : "..."}
           left={<Icon name="person-circle-outline" color={colors.muted} />}
+        />
+      </Card>
+
+      <SectionTitle>Docker</SectionTitle>
+      <Card>
+        <Row
+          title="Containers"
+          subtitle="All containers on the server: restart, start, stop"
+          left={<Icon name="cube-outline" color={colors.muted} />}
+          onPress={() => router.push("/containers")}
         />
       </Card>
 
@@ -72,12 +95,13 @@ export default function Settings() {
       </Card>
 
       <Button
-        title="Disconnect"
+        title="Remove this account"
         icon="log-out-outline"
         variant="danger"
         style={{ marginTop: space(6) }}
         onPress={async () => {
-          if (await confirm("Disconnect?", "Your API key will be removed from this device.", true)) await disconnect();
+          if (active && (await confirm(`Remove ${active.name}?`, "Its API key will be deleted from this device.", true)))
+            await removeAccount(active.id);
         }}
       />
     </ScrollView>
